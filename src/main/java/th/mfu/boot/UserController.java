@@ -1,9 +1,7 @@
 package th.mfu.boot;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,40 +15,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/users") // กำหนด base path
 public class UserController {
 
-    //TODO: add userrepository as `public` with @Autowired
     @Autowired
     public UserRepository repo;
    
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-
-        //TODO: check if user with the username exists
+        // TODO: check if user with the username exists
+        List<User> existingUsers = repo.findByUsername(user.getUsername());
+        if (!existingUsers.isEmpty()) {
+            return new ResponseEntity<>("Username already exists.", HttpStatus.CONFLICT);
+        }
        
-        //TODO: save the user
+        // TODO: save the user
+        repo.save(user);
 
-        //TODO: remove below and return proper status
-        return new ResponseEntity<>( HttpStatus.NOT_IMPLEMENTED);
+        // TODO: remove below and return proper status
+        return new ResponseEntity<>("User created successfully.", HttpStatus.CREATED);
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<List<User>> list() {
-        
-        //TODO: remove below and return proper result
-        return new ResponseEntity<>( HttpStatus.NOT_IMPLEMENTED);
+        // TODO: remove below and return proper result
+        List<User> users = (List<User>) repo.findAll();
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        
-        //TODO: check if user with the id exists
+        // TODO: check if user with the id exists
+        Optional<User> userOptional = repo.findById(id);
+        if (userOptional.isPresent()) {
+            // TODO: delete the user
+            repo.deleteById(id);
+            return new ResponseEntity<>("User deleted.", HttpStatus.OK);
+        }
        
-        //TODO: delete the user
-    
-        //TODO: remove below and return proper status
-        return new ResponseEntity<>( HttpStatus.NOT_IMPLEMENTED);
+        // TODO: remove below and return proper status
+        return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
     }
-
-
 }

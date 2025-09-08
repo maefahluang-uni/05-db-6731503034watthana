@@ -15,7 +15,8 @@ In UserRepository, declare the following methods that help to find all user and 
 - `data.sql` contains insert statements for dummy users. Find where this file is and explain what it is used for? 
 
 ```
-Your answer
+src/main/resources/data.sql
+It is used to initialize the database with sample data (dummy data / test data), such as adding example users or default values that should exist when the application starts.
 ```
 
 ## User Reservice - Complete the code
